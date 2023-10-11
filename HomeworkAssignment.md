@@ -26,7 +26,7 @@ This module is necessary to maximise the outflow of potable water with fluctuati
 9. Water Pump: TBD
 
 ### Steady State Analysis
-(Back of the envelop calculations done at 1 AM)
+[Notes](https://github.com/shantnavagarwal/Acraea_Controller/blob/main/Notes.pdf): (Back of the envelop calculations done at 1 AM)
 
 
 ---
