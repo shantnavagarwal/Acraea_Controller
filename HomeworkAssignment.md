@@ -26,13 +26,16 @@ The challenges we face are:
 1. Micro-controller [ESP32](https://nl.mouser.com/ProductDetail/Espressif-Systems/ESP32-DevKitC-32E?qs=GedFDFLaBXFpgD0kAZWDrQ%3D%3D&mgh=1&gclid=CjwKCAjwvfmoBhAwEiwAG2tqzKyGMrlCJj6loXDFPuatXf5MClWCINW2yCYJrGlP4VWNI27dlKA7LxoC8AgQAvD_BwE): The brain of the controller. Shall interface with various sensors and run the algorithm.  Count 1
 2. Heating pads [Thermo Silicon self adhesive pads](https://www.conrad.de/de/p/thermo-tech-silikon-heizfolie-selbstklebend-24-v-dc-24-v-ac-200-w-schutzart-ipx7-l-x-b-200-mm-x-100-mm-1594219.html): To add heat to the system for boiling water. Already available alongwith the Acraea prototype. Count 3.
 3. Temprature [sensors](https://www.adafruit.com/product/3290) and [amplifiers](https://www.adafruit.com/product/3328). Count 3
-4. Power Supply [24V 600 watt](http://www.meanwell.nl/products/Meanwell-HRP-600-24---PSU-enclosed-24V27A__HRP-600-24.aspx): To power the thermo silicon pads. A bench power supply is preferable over this. Count 1.
-5. Moisture sensor [Resistive](https://www.kiwi-electronics.com/en/grove-moisture-sensor-1913): Having, a moisuture sensor might allow us to have a much better understanding of the current state of the system and make more subtle changes to the head which might be difficult with the temperature sensor. Count 4.
-6. Moisture Sensor [Capacitive](https://wiki.seeedstudio.com/Grove-Capacitive_Moisture_Sensor-Corrosion-Resistant/): Same as 5. Has a different working principle which trades accuracy for longevity. Count 4.
-7. Temperature and Humidity [sensor](https://www.seeedstudio.com/Grove-Temperature-Humidity-Sensor-Pro-AM2302-DHT22.html)
-9. [Relay](https://www.kiwi-electronics.com/nl/4-kanaals-5v-relais-module-1330?country=NL&utm_term=1330&gclid=CjwKCAjwvfmoBhAwEiwAG2tqzDw9EwRN7TIkzKhoL92BZartT4O03Z28l3axM0jAtKEZsk0Wux2PZxoCo2IQAvD_BwE): For control input. Turn on/ off the water pump. Can also be used to control the thermo pads during development.
-10. Logic Level [converter](https://www.kiwi-electronics.com/en/4-channel-i2c-safe-bi-directional-logic-level-converter-bss138-837?search=level): For controlling the relay from ESP32
-11. Water Pump: TBD
+4. Temperature and Humidity [sensor](https://www.seeedstudio.com/Grove-Temperature-Humidity-Sensor-Pro-AM2302-DHT22.html)
+5. Power Supply [24V 600 watt](http://www.meanwell.nl/products/Meanwell-HRP-600-24---PSU-enclosed-24V27A__HRP-600-24.aspx): To power the thermo silicon pads. A bench power supply is preferable over this. Count 1.
+
+~~6. Moisture sensor [Resistive](https://www.kiwi-electronics.com/en/grove-moisture-sensor-1913): Having, a moisuture sensor might allow us to have a much better understanding of the current state of the system and make more subtle changes to the head which might be difficult with the temperature sensor. Count 4.~~
+
+~~7. Moisture Sensor [Capacitive](https://wiki.seeedstudio.com/Grove-Capacitive_Moisture_Sensor-Corrosion-Resistant/): Same as above. Has a different working principle which trades accuracy for longevity. Count 4.~~
+
+8. [Relay](https://www.kiwi-electronics.com/nl/4-kanaals-5v-relais-module-1330?country=NL&utm_term=1330&gclid=CjwKCAjwvfmoBhAwEiwAG2tqzDw9EwRN7TIkzKhoL92BZartT4O03Z28l3axM0jAtKEZsk0Wux2PZxoCo2IQAvD_BwE): For control input. Turn on/ off the water pump. Can also be used to control the thermo pads during development.
+9. Logic Level [converter](https://www.kiwi-electronics.com/en/4-channel-i2c-safe-bi-directional-logic-level-converter-bss138-837?search=level): For controlling the relay from ESP32
+10. Water Pump: TBD
 
 ### Steady State Analysis
 [Notes](https://github.com/shantnavagarwal/Acraea_Controller/blob/main/Notes.pdf): (Back of the envelop calculations done at 1 AM)
