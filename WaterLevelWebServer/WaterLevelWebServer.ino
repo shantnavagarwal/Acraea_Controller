@@ -46,7 +46,7 @@ void sendHtml(AsyncWebServerRequest *request) {
       <head>
         <title>Acraea - Control Interface</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="refresh" content="1">
+        <meta http-equiv="refresh" content="5" />
         <style>
           html { font-family: sans-serif; text-align: center; }
           body { display: inline-flex; flex-direction: column; }
@@ -62,8 +62,8 @@ void sendHtml(AsyncWebServerRequest *request) {
       <body>
         <h1>Acraea Control Interface</h1>
         <div>
-          <h3>Water Level: WATER_LEVEL_INP cm</h2>
-          <h3>Pump Status: PUMP_STATUS_INP</h2>
+          <h3>Water Level: WATER_LEVEL_INP cm</h3>
+          <h3>Pump Status: PUMP_STATUS_INP</h3>
           <a href="/toggle/pump_mode" class="btn pump_mode">Switch to PUMP_MODE_INP mode</a>
           PUMP_MODE_SPECIFIC
         </div>
@@ -110,7 +110,9 @@ void changePumpMode(AsyncWebServerRequest *request){
     // Release the semaphore
     xSemaphoreGive(xSemaphore);
   }
-  sendHtml(request);
+  Serial.println("changePumpModeCalled");
+  // sendHtml(request);
+  request->redirect("/");
 }
 
 void changePumpStatus(AsyncWebServerRequest *request){
@@ -120,7 +122,9 @@ void changePumpStatus(AsyncWebServerRequest *request){
     // Release the semaphore
     xSemaphoreGive(xSemaphore);
   }
-  sendHtml(request);
+  Serial.println("changePumpStatusCalled");
+  // sendHtml(request);
+  request->redirect("/");
 }
 
 void notFound(AsyncWebServerRequest *request) {
@@ -130,26 +134,29 @@ void notFound(AsyncWebServerRequest *request) {
 void setWaterLevel(AsyncWebServerRequest *request){
     if (xSemaphoreTake(xSemaphore, portMAX_DELAY)) {
       // Access and modify the shared variable
-      mode_automatic = !mode_automatic;
-      target_water_level = request->getParam("integerInput")->value().toInt();
+      mode_automatic = true;
+      String target_water_level_str = request->getParam("integerInput")->value();
+      target_water_level = target_water_level_str.toInt();
+      Serial.println("setWaterLevelCalled: " + target_water_level_str);
       // Release the semaphore
       xSemaphoreGive(xSemaphore);
     }
-    sendHtml(request);
+    // sendHtml(request);
+    request->redirect("/");
   }
 
 void core1Task(void *parameters){
   server.on("/", HTTP_GET, sendHtml);
   server.on("/toggle/pump_mode", HTTP_GET, changePumpMode);
   server.on("/mode_automatic_form", HTTP_GET, setWaterLevel);
-  server.on("/toggle/pump_status", HTTP_GET, changePumpMode);
+  server.on("/toggle/pump_status", HTTP_GET, changePumpStatus);
   server.onNotFound(notFound);
   server.begin();
   Serial.println("HTTP server started");
 
   while(true) {
     // server.handleClient();
-    // delay(2);
+    delay(2);
   }
 }
 
@@ -163,6 +170,10 @@ void sense_ultrasonic(){
   distance_ultrasonic = duration/29/2;
 }
 
+// void sense_ultrasonic(){
+//   distance_ultrasonic = random(5, 15);
+// }
+
 void control_algorithm(){
   if (xSemaphoreTake(xSemaphore, portMAX_DELAY)) {
     // Access and modify the shared variable
@@ -170,7 +181,7 @@ void control_algorithm(){
     if (mode_automatic){
       pump_status = water_level < target_water_level ? true : false;
     }
-    digitalWrite(pump_control_signal, pump_status ? 255 : 0);
+    digitalWrite(pump_control_signal, pump_status ? 0 : 255);
     // Release the semaphore
     xSemaphoreGive(xSemaphore);
   }
