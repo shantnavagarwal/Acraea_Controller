@@ -8,10 +8,10 @@ Program to monitor and control the flow of seawater through Acraea. The main pro
 - Logging data of the aforementioned parameters to onboard memory (CSV file) using SPIFFS
 - Show information via a webserver running on this device allowing the user to see the aforementioned parameters, set desired water height and manually control the pump
 
-![alt text](Images_ReadME/IMG_2929 2.PNG) 
+![Images_ReadME/IMG_2929 2.PNG](https://github.com/shantnavagarwal/Acraea_Controller/blob/main/Images_ReadME/IMG_2929%202.PNG)
 *Automatic control interface. User can specify the desired water level.*
 
-![alt text](Images_ReadME/IMG_2930 2.PNG) 
+![[alt text](Images_ReadME/IMG_2930 2.PNG) ](https://github.com/shantnavagarwal/Acraea_Controller/blob/main/Images_ReadME/IMG_2930%202.PNG)
 *Manual control interface. User can directly turn on/off the water pump.*
 
 ## List of materials required
