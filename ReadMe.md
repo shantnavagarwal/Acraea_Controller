@@ -1,17 +1,45 @@
 # Acraea Control using an ESP32
+Program to monitor and control the flow of seawater through Acraea. The main project files can be found inside "WaterLevelWebServer".
 
-### Features
-- Web page served via a webserver running on esp32 to see the current water level, temprature, humidity and whether the water pump is on / off<br>
-- Allows user to set the pump in manual or automatic mode. <br>
-- In automatic mode, the target water level can be set on the webpage and the pump will automatically turn on if it is below that level.<br>
-- In manual mode the user can control the pump manually through the webpage.<br>
-- All the data is logged periodically into an CSV file stored in the onboard memory using SPIFFS.<br>
-- Processing is distributed across both the cores of the ESP32<br>
+## Implemented Functionality
+- Sense the head of water in a container (of given length) using an ultrasonic sensor.
+- Sense the temperature and humidity using an DHT20 sensor via I2C communication
+- On/ Off control of a water pump to bring the head of the water to a desired value
+- Logging data of the aforementioned parameters to onboard memory (CSV file) using SPIFFS
+- Show information via a webserver running on this device allowing the user to see the aforementioned parameters, set desired water height and manually control the pump
 
+![alt text](Images_ReadME/IMG_2929 2.PNG) 
+*Automatic control interface. User can specify the desired water level.*
 
-### To be done
-- Proper documentation and comments within the code <br>
-- Refrences to libraries and contributors who provided inspiration for this solution <br>
-- Data logging is not working right now. This needs to be debugged<br>
-- Functionality can be added to monitor the water quality as well!<br>
+![alt text](Images_ReadME/IMG_2930 2.PNG) 
+*Manual control interface. User can directly turn on/off the water pump.*
+
+## List of materials required
+- [ESP32](https://www.tinytronics.nl/shop/en/development-boards/microcontroller-boards/with-wi-fi/esp32-wifi-and-bluetooth-board-with-separate-headers-cp2104)
+- [Ultrasonic Sensor](https://www.tinytronics.nl/shop/en/sensors/distance/ultrasonic-sensor-hc-sr04)
+- [Temperature and Humidity Sensor](https://www.tinytronics.nl/shop/en/sensors/air/humidity/asair-dht20-temperature-and-humidity-sensor-i2c)
+- [Water Pump](https://www.tinytronics.nl/shop/en/mechanics-and-actuators/motors/pumps/under-water-pump-vertical-3-6v)
+- [Mechanical Relay](https://www.tinytronics.nl/shop/en/switches/relays/5v-relay-4-channel-high-active-or-low-active)
+- Power supply
+
+## Required Libraries
+Following Libraries for the ESP32 are required
+- [ESPAsyncWebSrv](https://github.com/dvarrel/ESPAsyncWebSrv)
+- [DFRobot_DHT20](https://github.com/DFRobot/DFRobot_DHT20)
+
+## Usage
+- Flash the program on to the ESP32 using Arduino IDE after installing the aforementioned libraries.
+- The ESP32 should be connected to the sensors (Ultrasonic, Temperature) and actuators (Relay). The respective pins have been specified at the beginning of the code.
+- It is easier to use a breadboard/ power supply with multiple voltage and ground pins to make all the required connections.
+- Once the program is flashed and ESP32 reboots, connect to WiFi with SSID "ESP32" and password "OpenHardware"
+- Once connected to WiFi, go to webpage 192.168.4.1 - You should now be able to see the interface shown above.
+
+## Issues & Feature improvements
+- Data logging is not working right now. This needs to be debugged
+- The sensor data is updated by refreshing the webpage every 5 seconds. We can improve this by using Javascript instead. This will reduce the load on the ESP32 significantly and improve user experience.
+- Allow user to set threshold and container depth through the webpage itself.
+- Make it modular and use OOP. Rewrite the code such that this functionality is available as a class with configurable pin numbers. This will allow a user to control multiple Acraea modules using a single ESP32. We can use the already implemented FreeRTOS functionality to optimise performance.
+- Cloud based data logging. Might add costs for the user in terms of subscription fees.
+- Push notifications using [Local push connectivity](https://developer.apple.com/documentation/networkextension/local_push_connectivity)
+- Functionality can be added to monitor the water quality as well!
 
