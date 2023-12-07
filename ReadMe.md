@@ -36,10 +36,9 @@ Following Libraries for the ESP32 are required
 
 ## Issues & Feature improvements
 - Data logging is not working right now. This needs to be debugged
-- The sensor data is updated by refreshing the webpage every 5 seconds. We can improve this by using Javascript instead. This will reduce the load on the ESP32 significantly and improve user experience.
+- The sensor data is updated by refreshing the webpage every 5 seconds. We can improve this by using Javascript instead. This will reduce the load on the ESP32 and improve user experience.
 - Allow user to set threshold and container depth through the webpage itself.
-- Make it modular and use OOP. Rewrite the code such that this functionality is available as a class with configurable pin numbers. This will allow a user to control multiple Acraea modules using a single ESP32. We can use the already implemented FreeRTOS functionality to optimise performance.
+- Make it modular and use OOP. Rewrite the code such that this functionality is available as a class with configurable pin numbers. This will allow a user to control multiple Acraea modules using a single ESP32. Optimize performance throught the already implemented FreeRTOS functionality by creating a separate process for each class object.
 - Cloud based data logging. Might add costs for the user in terms of subscription fees.
-- Push notifications using [Local push connectivity](https://developer.apple.com/documentation/networkextension/local_push_connectivity)
-- Functionality can be added to monitor the water quality as well!
-
+- Push notifications using [Local push connectivity](https://developer.apple.com/documentation/networkextension/local_push_connectivity). Requires building a companion app but is a good to have feature.
+- Functionality can be added to monitor the water quality as well! [TDS Sensor](https://www.tinytronics.nl/shop/en/sensors/liquid/dfrobot-gravity-analog-tds-sensor)
