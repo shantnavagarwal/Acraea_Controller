@@ -38,6 +38,7 @@ Following Libraries for the ESP32 are required
 - Data logging is not working right now. This needs to be debugged
 - The sensor data is updated by refreshing the webpage every 5 seconds. We can improve this by using Javascript instead. This will reduce the load on the ESP32 and improve user experience.
 - Allow user to set threshold and container depth through the webpage itself.
+- Determine the optimal head of water given the current state of system.
 - Make it modular and use OOP. Rewrite the code such that this functionality is available as a class with configurable pin numbers. This will allow a user to control multiple Acraea modules using a single ESP32. Optimize performance throught the already implemented FreeRTOS functionality by creating a separate process for each class object.
 - Cloud based data logging. Might add costs for the user in terms of subscription fees.
 - Push notifications using [Local push connectivity](https://developer.apple.com/documentation/networkextension/local_push_connectivity). Requires building a companion app but is a good to have feature.
