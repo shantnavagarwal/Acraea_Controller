@@ -43,7 +43,7 @@ const int ECHO_PIN = 14;
 unsigned long duration = 0;
 double distance_ultrasonic = 0; // In Centimeter
 const int TimeDelay = 500; // milliseconds -> 500 == 2 Hz
-const int container_depth = 20; // In centimeter
+const double container_depth = 10.5; // In centimeter
 
 // Temprature and Humidity sensor setup
 /*!
@@ -250,7 +250,7 @@ void sense_temp_humi(){
 void control_algorithm(){
   if (xSemaphoreTake(xSemaphore, portMAX_DELAY)) {
     // Access and modify the shared variable
-    water_level = max(double(container_depth) - distance_ultrasonic, 0.0);
+    water_level = max(container_depth - distance_ultrasonic, 0.0);
     if (mode_automatic){
       pump_status = water_level < target_water_level ? true : false;
     }
