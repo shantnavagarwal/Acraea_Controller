@@ -1,7 +1,7 @@
 # Acraea Control using an ESP32
 Program to monitor and control the flow of seawater through [Acraea](https://codeberg.org/LibreWater/Acraea-Prototype). The main project files can be found inside "WaterLevelWebServer".
 
-Acraea as introduced by LibreWater (Organisation that designe Acraea):
+Acraea as introduced by LibreWater (Organisation that designed Acraea):
 ```
 Acraea is a Small Scale Solar Desalination and Water Purification Prototype.
 It is powered by electric heating for scientific purpose and for prototyping ahead according to the LibreWater Mission:
