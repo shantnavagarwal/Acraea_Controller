@@ -9,8 +9,7 @@
 #include <AsyncTCP.h>
 #include "ESPAsyncWebSrv.h"
 #include "esp_system.h"
-#include "FS.h"
-#include "SPIFFS.h"
+#include <SimplePgSQL.h>
 #include <DFRobot_DHT20.h>
 
 
@@ -31,9 +30,9 @@ const int pump_control_signal = 2;
 // Comunication Setup
 const int BAUD_RATE = 115200;
 
-#define WIFI_SSID "ESP32"
-#define WIFI_PASSWORD "OpenHardware"
-#define WIFI_CHANNEL 40
+#define WIFI_SSID "esp32"
+#define WIFI_PASSWORD "openhardware"
+// #define WIFI_CHANNEL 40
 
 AsyncWebServer server(80);
 
@@ -52,37 +51,28 @@ const double container_depth = 10.5; // In centimeter
  */
 DFRobot_DHT20 dht20;
 
-// Logging Setup
-String logdata_path = "/data.csv";
+// Data Logging Setup
+const IPAddress host = IPAddress(10,42,0,1);
+const char* user = "acraea";
+const char* pass = "turtle_power";
+const char* db = "acraea_db";
+const int myport = 3000;
+int logging_setup_status;
+
+// Initialize SimplePgSQL
+WiFiClient wifi_client;
+char buffer[1024];
+PGconnection pg(&wifi_client, 0, 0, buffer);
+
 
 void logData(String target_water_level_, String water_level_, String pump_status_, String humidity_, String temperature_){
-  if (!SPIFFS.begin()) {
-    Serial.println("Failed to mount file system");
-    return;
-  }
-
-  // Open the CSV file for appending
-  File file = SPIFFS.open(logdata_path, "a");
-  if (!file) {
-    Serial.println("Failed to open file for appending\nCreating new file: " + logdata_path);
-    file = SPIFFS.open(logdata_path, "w");
-    if (!file){
-      Serial.println("Could not create file. Exiting ...");
-      return;
+  if (logging_setup_status == CONNECTION_OK){
+    String query = "INSERT INTO run_data (temperature, humidity, water_level, time_stamp) VALUES (" + temperature_ + ", " + humidity_ + ", " + water_level_ + ")";
+    int status = pg.execute(query.c_str());
+    if (status != 0) {
+      Serial.println("Failed to insert data into database.");
     }
-    Serial.println("File created");
-    file.println("Target water level,Water Level,Pump Status,Humidity%,Temprature(C)");
   }
-  Serial.println("File Opened");
-
-    // Append the data to the CSV file
-  file.println(target_water_level_ + "," + water_level_ + "," + pump_status_ + "," + humidity_ + "," + temperature_);
-  
-
-  // Close the file
-  file.close();
-
-  Serial.println("Data appended to data.csv");
 }
 
 void sendHtml(AsyncWebServerRequest *request) {
@@ -196,21 +186,6 @@ void setWaterLevel(AsyncWebServerRequest *request){
     request->redirect("/");
   }
 
-void downloadLoggedData(AsyncWebServerRequest *request){
-  if (xSemaphoreTake(xSemaphore, portMAX_DELAY)) {
-    File file = SPIFFS.open(logdata_path, "r");
-    if (!file) {
-      request->send(404, "text/plain", "File not found");
-    }
-    else{
-      request->send(SPIFFS, logdata_path, "application/octet-stream");
-      // Send the file as a response
-      file.close();
-    }
-    xSemaphoreGive(xSemaphore);
-  }
-  return;
-}
 
 void core1Task(void *parameters){
   // Run the webserver
@@ -218,7 +193,6 @@ void core1Task(void *parameters){
   server.on("/toggle/pump_mode", HTTP_GET, changePumpMode);
   server.on("/mode_automatic_form", HTTP_GET, setWaterLevel);
   server.on("/toggle/pump_status", HTTP_GET, changePumpStatus);
-  server.on("/download_data", HTTP_GET, downloadLoggedData);
   server.onNotFound(notFound);
   server.begin();
   Serial.println("HTTP server started");
@@ -229,19 +203,22 @@ void core1Task(void *parameters){
 }
 
 void sense_ultrasonic(){
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  const unsigned long duration= pulseIn(ECHO_PIN, HIGH);
-  distance_ultrasonic = double(duration)/29.0/2.0;
+  // digitalWrite(TRIG_PIN, LOW);
+  // delayMicroseconds(2);
+  // digitalWrite(TRIG_PIN, HIGH);
+  // delayMicroseconds(10);
+  // digitalWrite(TRIG_PIN, LOW);
+  // const unsigned long duration= pulseIn(ECHO_PIN, HIGH);
+  // distance_ultrasonic = double(duration)/29.0/2.0;
+  distance_ultrasonic = esp_random();
 }
 
 void sense_temp_humi(){
   if (xSemaphoreTake(xSemaphore, portMAX_DELAY)) {
-    temperature_c = dht20.getTemperature();
-    humidity_p = dht20.getHumidity()*100.0;
+    // temperature_c = dht20.getTemperature();
+    // humidity_p = dht20.getHumidity()*100.0;
+    temperature_c = esp_random();
+    humidity_p = esp_random();
     // Release the semaphore
     xSemaphoreGive(xSemaphore);
   }
@@ -280,20 +257,34 @@ void setup(void) {
   pinMode(pump_control_signal, OUTPUT);
 
   xSemaphore = xSemaphoreCreateMutex();
-
-  WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+  
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.print("Setting up WiFi ");
   Serial.print(WIFI_SSID);
-
+  Serial.println("Connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+ }
   Serial.println(" Connected!");
 
   Serial.print("IP address: ");
-  Serial.println(WiFi.softAPIP());
-  Serial.println("Connecting to Temprature and humidity sensor ...");
-  while(dht20.begin()){
-    Serial.print(".");
-    delay(1000);
+  Serial.println(WiFi.localIP());
+
+   // Connect to PostgreSQL
+  logging_setup_status = pg.setDbLogin(host, user, pass, db, "utf8", myport);
+  if (logging_setup_status != CONNECTION_OK){
+    Serial.println("Connection to PostgreSQL failed.");
+    return;
   }
+  Serial.println("Connected to PostgreSQL");
+
+  Serial.println("Connecting to Temprature and humidity sensor ...");
+  // while(dht20.begin()){
+  //   Serial.print(".");
+  //   delay(1000);
+  // }
   Serial.println("Connected");
 
   xTaskCreatePinnedToCore(
