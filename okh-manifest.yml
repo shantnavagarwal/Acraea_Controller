@@ -9,6 +9,7 @@ intended-use: Program to monitor and control the flow of seawater through Acraea
 keywords:
   - Water Purification
   - ESP32
+development-plans: The project is being actively developed. We are adding cloud based logging as a feature to continously monitor the performance. We are also migrating the codebase to use environment.
 project-link: https://github.com/shantnavagarwal/Acraea_Controller
 made: true
 made-independently: false
